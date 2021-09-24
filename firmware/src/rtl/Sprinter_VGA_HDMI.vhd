@@ -48,6 +48,10 @@ port (
 	TV_nSYNC_IN : in std_logic := '0';
 	TV_SYNC_IN 	: out std_logic;
 	
+	-- HDMI
+	tmds			: out std_logic_vector (2 downto 0);
+	tmds_clock	: out std_logic;
+	
 	-- VGA 
 	VGA_nVGA_IN : in std_logic := '0';
 	VGA_VGA_IN	: out std_logic;
@@ -64,10 +68,14 @@ architecture rtl of Sprinter_VGA_HDMI is
 signal FRQ			: std_logic := '0';
 signal FRQx2		: std_logic := '0';
 signal FRQx2_REG	: std_logic := '0';
+signal FRQ_HDMI	: std_logic := '0';
 signal locked		: std_logic;
 signal TV_R_REG	: std_logic_vector(7 downto 0) := "00000000";
 signal TV_G_REG	: std_logic_vector(7 downto 0) := "00000000";
 signal TV_B_REG	: std_logic_vector(7 downto 0) := "00000000";
+signal VGA_R_REG	: std_logic_vector(7 downto 0) := "00000000";
+signal VGA_G_REG	: std_logic_vector(7 downto 0) := "00000000";
+signal VGA_B_REG	: std_logic_vector(7 downto 0) := "00000000";
 
 
 
@@ -78,7 +86,8 @@ U1: entity work.altpll0
 port map (
 	inclk0			=> TG42,
 	locked			=> locked,
-	c0 				=> FRQx2
+	c0 				=> FRQ_HDMI,
+	c1 				=> FRQx2
 	);
 	
 -- Scandoubler	
@@ -91,14 +100,37 @@ port map (
 	CLK2 				=> FRQx2,
 	EN 				=> not VGA_nVGA_IN,
 	DS80				=> '0',		
-	RGB_O(23 downto 16)	=> VGA_R,
-	RGB_O(15 downto 8)	=> VGA_G,
-	RGB_O(7 downto 0)		=> VGA_B,
+	RGB_O(23 downto 16)	=> VGA_R_REG,
+	RGB_O(15 downto 8)	=> VGA_G_REG,
+	RGB_O(7 downto 0)		=> VGA_B_REG,
 	VGA_BLANK_O 	=> TV_nBLANK,
+	RESET_V_O		=> reset,
 	VSYNC_VGA		=> VGA_VS,
 	HSYNC_VGA		=> VGA_HS
 );
+
+-- HDMI
+U3: entity work.hdmi 
+port map (
+  clk_pixel_x5			=> FREQ_HDMI,
+  clk_pixel				=> FREQx2,
+  clk_audio				=> '0',
+  reset					=> reset,
+  rgb						=>	VGA_R_REG&VGA_G_REG&VGA_B_REG,
+  audio_sample_word	=> "00",
+  tmds					=> tmds,
+  tmds_clock			=> tmds_clock,
+  cx						=> cx,
+  cy						=> cy,
+  frame_width			=> frame_width,
+  frame_height			=> frame_height,
+  screen_width			=> screen_width,
+  screen_height		=> screen_height
+);
 	
+hdmi #(.VIDEO_ID_CODE(1), .VIDEO_REFRESH_RATE(59.94), .AUDIO_RATE(48000), .AUDIO_BIT_WIDTH(16)) hdmi(
+
+);
 
 -------------------------------------------------------------------------------
 -- clocks
@@ -124,5 +156,8 @@ TV_SYNC_IN <= not TV_nSYNC_IN;
 	
 	-- VGA 
 VGA_VGA_IN	<= not VGA_nVGA_IN;
+VGA_R <= VGA_R_REG;
+VGA_G <= VGA_G_REG;
+VGA_B <= VGA_B_REG;
 	
 end rtl;

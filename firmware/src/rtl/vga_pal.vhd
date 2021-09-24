@@ -43,6 +43,7 @@ EN 			: in std_logic := '1'; -- включен ли даблер или отда
 
 RGB_O 	  : out std_logic_vector(23 downto 0) := (others => '0'); -- VGA RGB
 VGA_BLANK_O: out std_logic := '1'; -- гасящие импульсы для VGA
+RESET_V_O  : out std_logic := '1'; -- сброс по кадровым синхроимпульсам
 VSYNC_VGA  : out std_logic := '1'; -- кадровые синхроимпульсы
 HSYNC_VGA  : out std_logic := '1' -- строчные синхроимпульсы
 
@@ -212,6 +213,7 @@ end process;
 
 RESET_H <= SSI or SSI_2;      -- если 0, то можно сбрасывать счетчик тактов    
 RESET_V <= KSI or KSI_2;      -- если 0, то можно сбрасывать счетчик строк
+RESET_V_O <= RESET_V;
 -- зона для сброса счетчиков, 0 в средней части экрана по-вертикали
 RESET_ZONE  <= (not VIDEO_V(7) or VIDEO_V(8)); 
 

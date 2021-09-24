@@ -125,9 +125,19 @@ set_location_assignment PIN_66 -to VGA_VGA_IN
 set_location_assignment PIN_58 -to TV_nSYNC
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/tmds_channel.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/source_product_description_info_frame.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/serializer.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/packet_picker.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/packet_assembler.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/hdmi.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/auxiliary_video_information_info_frame.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/audio_sample_packet.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/audio_info_frame.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/audio_clock_regeneration_packet.sv
 set_global_assignment -name VHDL_FILE ../../rtl/vga_pal.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/Sprinter_VGA_HDMI.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/linebuf.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/altpll0.vhd
 set_global_assignment -name CDF_FILE Sprinter_VGA_HDMI_EP4CE6.cdf
-set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
