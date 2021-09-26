@@ -65,18 +65,50 @@ end Sprinter_VGA_HDMI;
 
 architecture rtl of Sprinter_VGA_HDMI is
 
-signal FRQ			: std_logic := '0';
-signal FRQx2		: std_logic := '0';
-signal FRQx2_REG	: std_logic := '0';
-signal FRQ_HDMI	: std_logic := '0';
-signal locked		: std_logic;
-signal TV_R_REG	: std_logic_vector(7 downto 0) := "00000000";
-signal TV_G_REG	: std_logic_vector(7 downto 0) := "00000000";
-signal TV_B_REG	: std_logic_vector(7 downto 0) := "00000000";
-signal VGA_R_REG	: std_logic_vector(7 downto 0) := "00000000";
-signal VGA_G_REG	: std_logic_vector(7 downto 0) := "00000000";
-signal VGA_B_REG	: std_logic_vector(7 downto 0) := "00000000";
+signal FRQ				: std_logic := '0';
+signal FRQx2			: std_logic := '0';
+signal FRQx2_REG		: std_logic := '0';
+signal FRQ_HDMI		: std_logic := '0';
+signal locked			: std_logic;
+signal TV_R_REG		: std_logic_vector(7 downto 0) := "00000000";
+signal TV_G_REG		: std_logic_vector(7 downto 0) := "00000000";
+signal TV_B_REG		: std_logic_vector(7 downto 0) := "00000000";
+signal VGA_R_REG		: std_logic_vector(7 downto 0) := "00000000";
+signal VGA_G_REG		: std_logic_vector(7 downto 0) := "00000000";
+signal VGA_B_REG		: std_logic_vector(7 downto 0) := "00000000";
+signal reset			: std_logic := '0';
+signal cx				: std_logic_vector (9 downto 0);
+signal cy				: std_logic_vector (9 downto 0);
+signal frame_width	: std_logic_vector (9 downto 0);
+signal frame_height	: std_logic_vector (9 downto 0);
+signal screen_width	: std_logic_vector (9 downto 0);
+signal screen_height	: std_logic_vector (9 downto 0);
 
+component hdmi
+generic	(
+	VIDEO_ID_CODE : integer := 1;
+	VIDEO_REFRESH_RATE : real := 59.94;
+	AUDIO_RATE : integer := 48000;
+	AUDIO_BIT_WIDTH : integer := 16
+);
+
+port		(
+  clk_pixel_x5			: in std_logic;
+  clk_pixel				: in std_logic;
+  clk_audio				: in std_logic;
+  reset					: in std_logic;
+  rgb						: in std_logic_vector (23 downto 0);
+  audio_sample_word	: in std_logic_vector (1 downto 0);
+  tmds					: out std_logic_vector (2 downto 0);
+  tmds_clock			: out std_logic;
+  cx						: out std_logic_vector (9 downto 0);
+  cy						: out std_logic_vector (9 downto 0);
+  frame_width			: out std_logic_vector (9 downto 0);
+  frame_height			: out std_logic_vector (9 downto 0);
+  screen_width			: out std_logic_vector (9 downto 0);
+  screen_height		: out std_logic_vector (9 downto 0)
+);
+end component;
 
 
 begin
@@ -110,10 +142,17 @@ port map (
 );
 
 -- HDMI
-U3: entity work.hdmi 
+U3: hdmi 
+generic map (
+	VIDEO_ID_CODE => 1,
+	VIDEO_REFRESH_RATE => 59.94,
+	AUDIO_RATE => 48000,
+	AUDIO_BIT_WIDTH => 16
+)
+
 port map (
-  clk_pixel_x5			=> FREQ_HDMI,
-  clk_pixel				=> FREQx2,
+  clk_pixel_x5			=> FRQ_HDMI,
+  clk_pixel				=> FRQx2,
   clk_audio				=> '0',
   reset					=> reset,
   rgb						=>	VGA_R_REG&VGA_G_REG&VGA_B_REG,
@@ -126,10 +165,6 @@ port map (
   frame_height			=> frame_height,
   screen_width			=> screen_width,
   screen_height		=> screen_height
-);
-	
-hdmi #(.VIDEO_ID_CODE(1), .VIDEO_REFRESH_RATE(59.94), .AUDIO_RATE(48000), .AUDIO_BIT_WIDTH(16)) hdmi(
-
 );
 
 -------------------------------------------------------------------------------
