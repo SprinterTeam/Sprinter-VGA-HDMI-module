@@ -98,7 +98,7 @@ port		(
   clk_audio				: in std_logic;
   reset					: in std_logic;
   rgb						: in std_logic_vector (23 downto 0);
-  audio_sample_word	: in std_logic_vector (1 downto 0);
+  audio_sample_word	: in std_logic_vector (15 downto 0);
   tmds					: out std_logic_vector (2 downto 0);
   tmds_clock			: out std_logic;
   cx						: out std_logic_vector (9 downto 0);
@@ -156,7 +156,7 @@ port map (
   clk_audio				=> '0',
   reset					=> reset,
   rgb						=>	VGA_R_REG&VGA_G_REG&VGA_B_REG,
-  audio_sample_word	=> "00",
+  audio_sample_word	=> "0000000000000000",
   tmds					=> tmds,
   tmds_clock			=> tmds_clock,
   cx						=> cx,
