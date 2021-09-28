@@ -88,17 +88,14 @@ component hdmi
 generic	(
 	VIDEO_ID_CODE : integer := 1;
 	VIDEO_REFRESH_RATE : real := 59.94;
-	AUDIO_RATE : integer := 48000;
-	AUDIO_BIT_WIDTH : integer := 16
+	DVI_OUTPUT : integer := 1
 );
 
 port		(
   clk_pixel_x5			: in std_logic;
   clk_pixel				: in std_logic;
-  clk_audio				: in std_logic;
   reset					: in std_logic;
   rgb						: in std_logic_vector (23 downto 0);
-  audio_sample_word	: in std_logic_vector (15 downto 0);
   tmds					: out std_logic_vector (2 downto 0);
   tmds_clock			: out std_logic;
   cx						: out std_logic_vector (9 downto 0);
@@ -146,17 +143,14 @@ U3: hdmi
 generic map (
 	VIDEO_ID_CODE => 1,
 	VIDEO_REFRESH_RATE => 59.94,
-	AUDIO_RATE => 48000,
-	AUDIO_BIT_WIDTH => 16
+	DVI_OUTPUT => 1
 )
 
 port map (
   clk_pixel_x5			=> FRQ_HDMI,
   clk_pixel				=> FRQx2,
-  clk_audio				=> '0',
   reset					=> reset,
   rgb						=>	VGA_R_REG&VGA_G_REG&VGA_B_REG,
-  audio_sample_word	=> "0000000000000000",
   tmds					=> tmds,
   tmds_clock			=> tmds_clock,
   cx						=> cx,
