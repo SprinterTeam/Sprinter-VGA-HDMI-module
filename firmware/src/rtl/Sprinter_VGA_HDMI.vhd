@@ -51,6 +51,7 @@ port (
 	-- HDMI
 	tmds			: out std_logic_vector (2 downto 0);
 	tmds_clock	: out std_logic;
+	tmds_0n		: out std_logic := '0';
 	
 	-- VGA 
 	VGA_nVGA_IN : in std_logic := '0';
