@@ -15,11 +15,12 @@
 --                        *#######*                                                                                                                            --
 --                       .#@%+:..                                                                                                                              --
 --																																																					--
--- https://github.com/solegstar/Sprinter-VGA-HDMI-module																																				--
+-- https://github.com/solegstar/Sprinter-VGA-HDMI-module																																			--
 --																																																					--
 -- FPGA firmware for Sprinter VGA Module																																								--
 --																																																					--
 -- @author Andy Karpov <andy.karpov@gmail.com>																																						--
+-- @HDMI codec by MVV <https://github.com/mvvproject/ReVerSE-U16>																																--
 -- @author Oleh Starychenko <solegstar@gmail.com>																																					--
 -- Ukraine, 2021																																																--
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -49,10 +50,8 @@ port (
 	TV_SYNC_IN 	: out std_logic;
 	
 	-- HDMI
-	tmds			: out std_logic_vector (2 downto 0);
-	tmds_clock	: out std_logic;
-	tmds_0n		: out std_logic := '0';
-	
+	tmds			: out std_logic_vector (7 downto 0);
+
 	-- VGA 
 	VGA_nVGA_IN : in std_logic := '0';
 	VGA_VGA_IN	: out std_logic;
@@ -68,7 +67,6 @@ architecture rtl of Sprinter_VGA_HDMI is
 
 signal FRQ				: std_logic := '0';
 signal FRQx2			: std_logic := '0';
-signal FRQx2_REG		: std_logic := '0';
 signal FRQ_HDMI		: std_logic := '0';
 signal locked			: std_logic;
 signal TV_R_REG		: std_logic_vector(7 downto 0) := "00000000";
@@ -77,36 +75,9 @@ signal TV_B_REG		: std_logic_vector(7 downto 0) := "00000000";
 signal VGA_R_REG		: std_logic_vector(7 downto 0) := "00000000";
 signal VGA_G_REG		: std_logic_vector(7 downto 0) := "00000000";
 signal VGA_B_REG		: std_logic_vector(7 downto 0) := "00000000";
-signal reset			: std_logic := '0';
-signal cx				: std_logic_vector (9 downto 0);
-signal cy				: std_logic_vector (9 downto 0);
-signal frame_width	: std_logic_vector (9 downto 0);
-signal frame_height	: std_logic_vector (9 downto 0);
-signal screen_width	: std_logic_vector (9 downto 0);
-signal screen_height	: std_logic_vector (9 downto 0);
-
-component hdmi
-generic	(
-	VIDEO_ID_CODE : integer := 1;
-	VIDEO_REFRESH_RATE : real := 59.94;
-	DVI_OUTPUT : integer := 1
-);
-
-port		(
-  clk_pixel_x5			: in std_logic;
-  clk_pixel				: in std_logic;
-  reset					: in std_logic;
-  rgb						: in std_logic_vector (23 downto 0);
-  tmds					: out std_logic_vector (2 downto 0);
-  tmds_clock			: out std_logic;
-  cx						: out std_logic_vector (9 downto 0);
-  cy						: out std_logic_vector (9 downto 0);
-  frame_width			: out std_logic_vector (9 downto 0);
-  frame_height			: out std_logic_vector (9 downto 0);
-  screen_width			: out std_logic_vector (9 downto 0);
-  screen_height		: out std_logic_vector (9 downto 0)
-);
-end component;
+signal VGA_BLANK		: std_logic := '0';
+signal VGA_VS_O		: std_logic := '0';
+signal VGA_HS_O		: std_logic := '0';
 
 
 begin
@@ -128,39 +99,28 @@ port map (
 	SSI_IN 			=> not TV_HS,
 	CLK 				=> FRQ,
 	CLK2 				=> FRQx2,
-	EN 				=> not VGA_nVGA_IN,
 	DS80				=> '0',		
 	RGB_O(23 downto 16)	=> VGA_R_REG,
 	RGB_O(15 downto 8)	=> VGA_G_REG,
 	RGB_O(7 downto 0)		=> VGA_B_REG,
-	VGA_BLANK_O 	=> TV_nBLANK,
-	RESET_V_O		=> reset,
-	VSYNC_VGA		=> VGA_VS,
-	HSYNC_VGA		=> VGA_HS
+	VGA_BLANK_O 	=> VGA_BLANK,
+	VSYNC_VGA		=> VGA_VS_O,
+	HSYNC_VGA		=> VGA_HS_O
 );
 
 -- HDMI
-U3: hdmi 
-generic map (
-	VIDEO_ID_CODE => 1,
-	VIDEO_REFRESH_RATE => 59.94,
-	DVI_OUTPUT => 1
-)
-
+hdmi_inst: entity work.hdmi
 port map (
-  clk_pixel_x5			=> FRQ_HDMI,
-  clk_pixel				=> FRQx2,
-  reset					=> reset,
-  rgb						=>	VGA_R_REG&VGA_G_REG&VGA_B_REG,
-  tmds					=> tmds,
-  tmds_clock			=> tmds_clock,
-  cx						=> cx,
-  cy						=> cy,
-  frame_width			=> frame_width,
-  frame_height			=> frame_height,
-  screen_width			=> screen_width,
-  screen_height		=> screen_height
-);
+	I_CLK_PIXEL	=> FRQx2,
+	I_CLK_TMDS	=> FRQ_HDMI,	-- 472.6 MHz max
+
+	I_HSYNC		=> VGA_HS_O,
+	I_VSYNC		=> VGA_VS_O,
+	I_BLANK		=> not VGA_BLANK,
+	I_RED			=> VGA_R_REG(0)&VGA_R_REG(1)&VGA_R_REG(2)&VGA_R_REG(3)&VGA_R_REG(4)&VGA_R_REG(5)&VGA_R_REG(6)&VGA_R_REG(7),
+	I_GREEN		=> VGA_G_REG(0)&VGA_G_REG(1)&VGA_G_REG(2)&VGA_G_REG(3)&VGA_G_REG(4)&VGA_G_REG(5)&VGA_G_REG(6)&VGA_G_REG(7),
+	I_BLUE		=> VGA_B_REG(0)&VGA_B_REG(1)&VGA_B_REG(2)&VGA_B_REG(3)&VGA_B_REG(4)&VGA_B_REG(5)&VGA_B_REG(6)&VGA_B_REG(7),
+	O_TMDS		=> tmds);
 
 -------------------------------------------------------------------------------
 -- clocks
@@ -181,6 +141,19 @@ begin
 	end if;
 end process;
 
+process (VGA_nVGA_IN, VGA_VS_O, VGA_HS_O, VGA_BLANK, TV_VS, TV_HS) 
+begin
+	if (VGA_nVGA_IN = '0') then 
+		VGA_VS <= VGA_VS_O;      -- кадровые синхроимпульсы для VGA
+		VGA_HS <= VGA_HS_O;      -- строчные синхроимпульсы для VGA
+		TV_nBLANK <= VGA_BLANK;
+	else 
+		VGA_VS <= TV_VS;
+		VGA_HS <= TV_HS;
+		TV_nBLANK <= TV_VS or TV_HS;
+	end if;
+end process;
+
 TV_nSYNC <= not TV_SYNC;
 TV_SYNC_IN <= not TV_nSYNC_IN;
 	
@@ -189,5 +162,5 @@ VGA_VGA_IN	<= not VGA_nVGA_IN;
 VGA_R <= VGA_R_REG;
 VGA_G <= VGA_G_REG;
 VGA_B <= VGA_B_REG;
-	
+
 end rtl;
