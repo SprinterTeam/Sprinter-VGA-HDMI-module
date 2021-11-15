@@ -34,8 +34,8 @@ entity Sprinter_VGA_HDMI is
 
 port (
 	-- Clocks
-	TG42 		: in std_logic := '0';
-	WR_COL	: in std_logic := '0';
+	TG42 			: in std_logic := '0';
+	WR_COL		: in std_logic := '0';
 
 	-- TV IN
 	TV_R 			: in std_logic_vector(7 downto 0) := "00000000";
@@ -50,7 +50,10 @@ port (
 	TV_SYNC_IN 	: out std_logic;
 	
 	-- HDMI
-	tmds			: out std_logic_vector (7 downto 0);
+	HDMI_D0		: out std_logic;
+	HDMI_D1		: out std_logic;
+	HDMI_D2		: out std_logic;
+	HDMI_CLK		: out std_logic;
 
 	-- VGA 
 	VGA_nVGA_IN : in std_logic := '0';
@@ -65,9 +68,10 @@ end Sprinter_VGA_HDMI;
 
 architecture rtl of Sprinter_VGA_HDMI is
 
-signal FRQ				: std_logic := '0';
-signal FRQx2			: std_logic := '0';
-signal FRQ_HDMI		: std_logic := '0';
+signal CLK_PIXEL_TV	: std_logic := '0';
+signal CLK_VGA			: std_logic := '0';
+signal CLK_DVI			: std_logic := '0';
+signal CLK_PIXEL_VGA	: std_logic := '0';
 signal locked			: std_logic;
 signal TV_R_REG		: std_logic_vector(7 downto 0) := "00000000";
 signal TV_G_REG		: std_logic_vector(7 downto 0) := "00000000";
@@ -79,7 +83,6 @@ signal VGA_BLANK		: std_logic := '0';
 signal VGA_VS_O		: std_logic := '0';
 signal VGA_HS_O		: std_logic := '0';
 
-
 begin
 
 -- PLL1
@@ -87,48 +90,52 @@ U1: entity work.altpll0
 port map (
 	inclk0			=> TG42,
 	locked			=> locked,
-	c0 				=> FRQ_HDMI,
-	c1 				=> FRQx2
+	c0 				=> CLK_DVI,
+	c1 				=> CLK_PIXEL_VGA,
+	c2 				=> CLK_VGA
 	);
 	
 -- Scandoubler	
 U2: entity work.vga_pal 
 port map (
-	RGB_IN 			=> TV_R_REG&TV_G_REG&TV_B_REG,
-	KSI_IN 			=> not TV_VS,
-	SSI_IN 			=> not TV_HS,
-	CLK 				=> FRQ,
-	CLK2 				=> FRQx2,
-	DS80				=> '0',		
+	RGB_IN 				=> TV_R_REG&TV_G_REG&TV_B_REG,
+	KSI_IN 				=> not TV_VS,
+	SSI_IN 				=> not TV_HS,
+	CLK 					=> CLK_PIXEL_TV,
+	CLK2 					=> CLK_VGA,
+	DS80					=> '0',		
 	RGB_O(23 downto 16)	=> VGA_R_REG,
 	RGB_O(15 downto 8)	=> VGA_G_REG,
 	RGB_O(7 downto 0)		=> VGA_B_REG,
-	VGA_BLANK_O 	=> VGA_BLANK,
-	VSYNC_VGA		=> VGA_VS_O,
-	HSYNC_VGA		=> VGA_HS_O
+	VGA_BLANK_O 		=> VGA_BLANK,
+	VSYNC_VGA			=> VGA_VS_O,
+	HSYNC_VGA			=> VGA_HS_O
 );
 
 -- HDMI
-hdmi_inst: entity work.hdmi
-port map (
-	I_CLK_PIXEL	=> FRQx2,
-	I_CLK_TMDS	=> FRQ_HDMI,	-- 472.6 MHz max
-
-	I_HSYNC		=> VGA_HS_O,
-	I_VSYNC		=> VGA_VS_O,
-	I_BLANK		=> not VGA_BLANK,
-	I_RED			=> VGA_R_REG(0)&VGA_R_REG(1)&VGA_R_REG(2)&VGA_R_REG(3)&VGA_R_REG(4)&VGA_R_REG(5)&VGA_R_REG(6)&VGA_R_REG(7),
-	I_GREEN		=> VGA_G_REG(0)&VGA_G_REG(1)&VGA_G_REG(2)&VGA_G_REG(3)&VGA_G_REG(4)&VGA_G_REG(5)&VGA_G_REG(6)&VGA_G_REG(7),
-	I_BLUE		=> VGA_B_REG(0)&VGA_B_REG(1)&VGA_B_REG(2)&VGA_B_REG(3)&VGA_B_REG(4)&VGA_B_REG(5)&VGA_B_REG(6)&VGA_B_REG(7),
-	O_TMDS		=> tmds);
+inst_dvid: entity work.hdmi
+port map(
+	CLK_DVI		=> CLK_DVI,				-- clk 140mhz
+	CLK_PIXEL	=> CLK_PIXEL_VGA,		-- clk 28mhz
+	R				=> VGA_R_REG(0)&VGA_R_REG(1)&VGA_R_REG(2)&VGA_R_REG(3)&VGA_R_REG(4)&VGA_R_REG(5)&VGA_R_REG(6)&VGA_R_REG(7),
+	G				=> VGA_G_REG(0)&VGA_G_REG(1)&VGA_G_REG(2)&VGA_G_REG(3)&VGA_G_REG(4)&VGA_G_REG(5)&VGA_G_REG(6)&VGA_G_REG(7),
+	B				=> VGA_B_REG(0)&VGA_B_REG(1)&VGA_B_REG(2)&VGA_B_REG(3)&VGA_B_REG(4)&VGA_B_REG(5)&VGA_B_REG(6)&VGA_B_REG(7),
+	BLANK			=> not VGA_BLANK,
+	HSYNC			=> VGA_HS_O,
+	VSYNC			=> VGA_VS_O,
+	TMDS_D0		=> HDMI_D0,
+	TMDS_D1		=> HDMI_D1,
+	TMDS_D2		=> HDMI_D2,
+	TMDS_CLK		=> HDMI_CLK
+);
 
 -------------------------------------------------------------------------------
 -- clocks
 
-process (FRQx2)
+process (CLK_VGA)
 begin 
-	if (FRQx2'event and FRQx2 = '1') then 
-		FRQ <= not(FRQ);
+	if (CLK_VGA'event and CLK_VGA = '1') then 
+		CLK_PIXEL_TV <= not(CLK_PIXEL_TV);
 	end if;
 end process;
 
