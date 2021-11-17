@@ -54,6 +54,11 @@ port (
 	HDMI_D1		: out std_logic;
 	HDMI_D2		: out std_logic;
 	HDMI_CLK		: out std_logic;
+	HDMI_SCL		: in std_logic := '0';
+	HDMI_SDA		: in std_logic := '0';
+	HDMI_CEC		: in std_logic := '0';
+	HDMI_ARC		: in std_logic := '0';
+	HDMI_DET		: in std_logic := '0';
 
 	-- VGA 
 	VGA_nVGA_IN : in std_logic := '0';

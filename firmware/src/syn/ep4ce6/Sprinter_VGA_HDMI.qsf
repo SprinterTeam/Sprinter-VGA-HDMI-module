@@ -125,32 +125,31 @@ set_location_assignment PIN_66 -to VGA_VGA_IN
 set_location_assignment PIN_58 -to TV_nSYNC
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
-set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/tmds_channel.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/source_product_description_info_frame.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/serializer.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/packet_picker.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/packet_assembler.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/hdmi.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/auxiliary_video_information_info_frame.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/audio_sample_packet.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/audio_info_frame.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/hdmi_codec/audio_clock_regeneration_packet.sv
+set_global_assignment -name VHDL_FILE ../../rtl/hdmi/serializer.vhd
+set_global_assignment -name VHDL_FILE ../../rtl/hdmi/hdmi.vhd
+set_global_assignment -name VHDL_FILE ../../rtl/hdmi/encoder.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/vga_pal.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/Sprinter_VGA_HDMI.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/linebuf.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/altpll0.vhd
 set_global_assignment -name CDF_FILE Sprinter_VGA_HDMI_EP4CE6.cdf
-set_location_assignment PIN_52 -to tmds[2]
-set_location_assignment PIN_49 -to tmds[1]
-set_location_assignment PIN_43 -to tmds[0]
-set_location_assignment PIN_38 -to tmds_clock
-set_instance_assignment -name IO_STANDARD LVDS_E_3R -to tmds[2]
-set_location_assignment PIN_53 -to "tmds[2](n)"
-set_instance_assignment -name IO_STANDARD LVDS_E_3R -to tmds[1]
-set_location_assignment PIN_50 -to "tmds[1](n)"
-set_instance_assignment -name IO_STANDARD "2.5 V" -to tmds[0]
-set_instance_assignment -name IO_STANDARD LVDS_E_3R -to tmds_clock
-set_location_assignment PIN_39 -to "tmds_clock(n)"
-set_location_assignment PIN_44 -to tmds_0n
-set_instance_assignment -name IO_STANDARD "2.5 V" -to tmds_0n
+set_instance_assignment -name IO_STANDARD LVDS_E_3R -to HDMI_CLK
+set_instance_assignment -name IO_STANDARD LVDS_E_3R -to HDMI_D0
+set_instance_assignment -name IO_STANDARD LVDS_E_3R -to HDMI_D1
+set_instance_assignment -name IO_STANDARD LVDS_E_3R -to HDMI_D2
+set_location_assignment PIN_52 -to HDMI_D2
+set_location_assignment PIN_53 -to "HDMI_D2(n)"
+set_location_assignment PIN_49 -to HDMI_D1
+set_location_assignment PIN_50 -to "HDMI_D1(n)"
+set_location_assignment PIN_38 -to HDMI_D0
+set_location_assignment PIN_39 -to "HDMI_D0(n)"
+set_location_assignment PIN_43 -to HDMI_CLK
+set_location_assignment PIN_44 -to "HDMI_CLK(n)"
+set_location_assignment PIN_55 -to HDMI_SCL
+set_location_assignment PIN_54 -to HDMI_SDA
+set_location_assignment PIN_51 -to HDMI_CEC
+set_location_assignment PIN_42 -to HDMI_DET
+set_instance_assignment -name IO_STANDARD "2.5 V" -to HDMI_CEC
+set_instance_assignment -name IO_STANDARD "2.5 V" -to HDMI_DET
+set_location_assignment PIN_46 -to HDMI_ARC
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
