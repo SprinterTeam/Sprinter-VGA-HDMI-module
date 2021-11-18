@@ -149,7 +149,6 @@ set_location_assignment PIN_55 -to HDMI_SCL
 set_location_assignment PIN_54 -to HDMI_SDA
 set_location_assignment PIN_51 -to HDMI_CEC
 set_location_assignment PIN_42 -to HDMI_DET
-set_instance_assignment -name IO_STANDARD "2.5 V" -to HDMI_CEC
-set_instance_assignment -name IO_STANDARD "2.5 V" -to HDMI_DET
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to HDMI_DET
 set_location_assignment PIN_46 -to HDMI_ARC
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
