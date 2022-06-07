@@ -158,3 +158,4 @@ set_location_assignment PIN_82 -to VGA_B[5]
 set_location_assignment PIN_79 -to TV_B[5]
 set_location_assignment PIN_78 -to TV_B[4]
 set_location_assignment PIN_77 -to VGA_B[4]
+set_global_assignment -name MISC_FILE "C:/GitHub/Sprinter-VGA-HDMI-module/firmware/ep1c3/syn/Sprinter_VGA_HDMI.dpf"
