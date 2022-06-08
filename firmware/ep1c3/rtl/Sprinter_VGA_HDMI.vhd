@@ -149,7 +149,7 @@ port map (
 -------------------------------------------------------------------------------
 -- clocks
 
-CLK_VGA <= CLK_PLL_IN;
+CLK_VGA <= CLK_PIXEL_VGA;
 
 process (CLK_VGA)
 begin 

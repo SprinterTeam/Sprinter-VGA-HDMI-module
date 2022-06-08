@@ -33,7 +33,7 @@ architecture rtl of encoder is
 
 begin
 	
-	process (I_CLK)
+	process (I_CLK, I_CD)
 	begin
 		if (I_CLK'event and I_CLK = '1') then
 			if (I_VDE = '1') then 
