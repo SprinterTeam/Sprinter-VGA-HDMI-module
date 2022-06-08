@@ -139,7 +139,7 @@ port map(
 -------------------------------------------------------------------------------
 -- clocks
 
-CLK_VGA <= not CLK_PIXEL_VGA;
+CLK_VGA <= CLK_PLL_IN;
 
 process (CLK_VGA)
 begin 
