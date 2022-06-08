@@ -4,7 +4,7 @@ JedecChain;
 	DefaultMfr(6E);
 
 	P ActionCode(Cfg)
-		Device PartName(EP1C3) Path("D:/GitHub/Sprinter-VGA-HDMI-module/firmware/releases/") File("sprinter_vga_hdmi_ep1c3.jic") MfrSpec(OpMask(1) SEC_Device(EPCS16) Child_OpMask(1 7));
+		Device PartName(EP1C3) Path("../../releases/") File("sprinter_vga_hdmi_ep1c3.jic") MfrSpec(OpMask(1) SEC_Device(EPCS16) Child_OpMask(1 7));
 
 ChainEnd;
 

@@ -8,8 +8,6 @@
 		</pin>
 		<pin name="HDMI_D0" direction="Output" source="Assignments" diff_pair_node="HDMI_D0(n)" >
 		</pin>
-		<pin name="HDMI_D2(n)" direction="Output" source="Assignments" diff_pair_node="HDMI_D2" >
-		</pin>
 		<pin name="HDMI_D1(n)" direction="Output" source="Assignments" diff_pair_node="HDMI_D1" >
 		</pin>
 		<pin name="HDMI_D0(n)" direction="Output" source="Assignments" diff_pair_node="HDMI_D0" >
@@ -17,6 +15,8 @@
 		<pin name="HDMI_CLK" direction="Output" source="Assignments" diff_pair_node="HDMI_CLK(n)" >
 		</pin>
 		<pin name="HDMI_CLK(n)" direction="Output" source="Assignments" diff_pair_node="HDMI_CLK" >
+		</pin>
+		<pin name="HDMI_D2(n)" direction="Output" source="Assignments" diff_pair_node="HDMI_D2" >
 		</pin>
 	</pin_info>
 	<buses>

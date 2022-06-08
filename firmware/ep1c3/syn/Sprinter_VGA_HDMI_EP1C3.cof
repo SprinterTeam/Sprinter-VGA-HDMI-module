@@ -2,7 +2,7 @@
 <cof>
 	<eprom_name>EPCS16</eprom_name>
 	<flash_loader_device>EP1C3</flash_loader_device>
-	<output_filename>../../../releases/sprinter_vga_hdmi_ep1c3.jic</output_filename>
+	<output_filename>../../releases/sprinter_vga_hdmi_ep1c3.jic</output_filename>
 	<n_pages>1</n_pages>
 	<width>1</width>
 	<mode>7</mode>

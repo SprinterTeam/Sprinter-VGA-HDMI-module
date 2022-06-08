@@ -52,10 +52,7 @@ port (
 	TV_SYNC_IN 	: out std_logic;
 	
 	-- HDMI
-	HDMI_D0		: out std_logic;
-	HDMI_D1		: out std_logic;
-	HDMI_D2		: out std_logic;
-	HDMI_CLK	: out std_logic;
+	HDMI_DATA	: out std_logic_vector (7 downto 0);
 	HDMI_SCL	: in std_logic := '0';
 	HDMI_SDA	: in std_logic := '0';
 	HDMI_CEC	: in std_logic := '0';
@@ -120,21 +117,34 @@ port map (
 );
 
 -- HDMI
-inst_dvid: entity work.hdmi
-port map(
-	CLK_DVI		=> CLK_DVI,				-- clk 140mhz
-	CLK_PIXEL	=> CLK_PIXEL_VGA,		-- clk 28mhz
-	R			=> VGA_R_REG(0)&VGA_R_REG(1)&VGA_R_REG(2)&VGA_R_REG(3)&VGA_R_REG(4)&VGA_R_REG(5)&VGA_R_REG(6)&VGA_R_REG(7),
-	G			=> VGA_G_REG(0)&VGA_G_REG(1)&VGA_G_REG(2)&VGA_G_REG(3)&VGA_G_REG(4)&VGA_G_REG(5)&VGA_G_REG(6)&VGA_G_REG(7),
-	B			=> VGA_B_REG(0)&VGA_B_REG(1)&VGA_B_REG(2)&VGA_B_REG(3)&VGA_B_REG(4)&VGA_B_REG(5)&VGA_B_REG(6)&VGA_B_REG(7),
-	BLANK		=> not VGA_BLANK,
-	HSYNC		=> VGA_HS_O,
-	VSYNC		=> VGA_VS_O,
-	TMDS_D0		=> HDMI_D0,
-	TMDS_D1		=> HDMI_D1,
-	TMDS_D2		=> HDMI_D2,
-	TMDS_CLK	=> HDMI_CLK
-);
+--inst_dvid: entity work.hdmi
+--port map(
+--	CLK_DVI		=> CLK_DVI,				-- clk 140mhz
+--	CLK_PIXEL	=> CLK_PIXEL_VGA,		-- clk 28mhz
+--	R			=> VGA_R_REG(0)&VGA_R_REG(1)&VGA_R_REG(2)&VGA_R_REG(3)&VGA_R_REG(4)&VGA_R_REG(5)&VGA_R_REG(6)&VGA_R_REG(7),
+--	G			=> VGA_G_REG(0)&VGA_G_REG(1)&VGA_G_REG(2)&VGA_G_REG(3)&VGA_G_REG(4)&VGA_G_REG(5)&VGA_G_REG(6)&VGA_G_REG(7),
+--	B			=> VGA_B_REG(0)&VGA_B_REG(1)&VGA_B_REG(2)&VGA_B_REG(3)&VGA_B_REG(4)&VGA_B_REG(5)&VGA_B_REG(6)&VGA_B_REG(7),
+--	BLANK		=> not VGA_BLANK,
+--	HSYNC		=> VGA_HS_O,
+--	VSYNC		=> VGA_VS_O,
+--	TMDS_D0		=> HDMI_D0,
+--	TMDS_D1		=> HDMI_D1,
+--	TMDS_D2		=> HDMI_D2,
+--	TMDS_CLK	=> HDMI_CLK
+--);
+
+hdmi_inst: entity work.hdmi
+port map (
+	I_CLK_PIXEL	=> CLK_PIXEL_VGA,
+	I_CLK_TMDS	=> CLK_DVI,	-- 472.6 MHz max
+
+	I_HSYNC		=> VGA_HS_O,
+	I_VSYNC		=> VGA_VS_O,
+	I_BLANK		=> not VGA_BLANK,
+	I_RED		=> VGA_R_REG(0)&VGA_R_REG(1)&VGA_R_REG(2)&VGA_R_REG(3)&VGA_R_REG(4)&VGA_R_REG(5)&VGA_R_REG(6)&VGA_R_REG(7),
+	I_GREEN		=> VGA_G_REG(0)&VGA_G_REG(1)&VGA_G_REG(2)&VGA_G_REG(3)&VGA_G_REG(4)&VGA_G_REG(5)&VGA_G_REG(6)&VGA_G_REG(7),
+	I_BLUE		=> VGA_B_REG(0)&VGA_B_REG(1)&VGA_B_REG(2)&VGA_B_REG(3)&VGA_B_REG(4)&VGA_B_REG(5)&VGA_B_REG(6)&VGA_B_REG(7),
+	O_TMDS		=> HDMI_DATA);
 
 -------------------------------------------------------------------------------
 -- clocks
