@@ -121,20 +121,42 @@ set_location_assignment PIN_79 -to TV_B[5]
 set_location_assignment PIN_78 -to TV_B[4]
 set_location_assignment PIN_77 -to VGA_B[4]
 set_global_assignment -name MISC_FILE "C:/GitHub/Sprinter-VGA-HDMI-module/firmware/ep1c3/syn/Sprinter_VGA_HDMI.dpf"
-set_global_assignment -name VHDL_FILE ../rtl/hdmi/altddio_out1.vhd
 set_global_assignment -name VHDL_FILE ../rtl/hdmi/encoder.vhd
 set_global_assignment -name VHDL_FILE ../rtl/hdmi/hdmi.vhd
+set_global_assignment -name VHDL_FILE ../rtl/hdmi/serializer.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/vga_pal.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/Sprinter_VGA_HDMI.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/linebuf.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/altpll0.vhd
 set_global_assignment -name CDF_FILE Sprinter_VGA_HDMI_EP3C5.cdf
 set_global_assignment -name QIP_FILE ../rtl/altpll0.qip
-set_location_assignment PIN_50 -to HDMI_DATA[7]
-set_location_assignment PIN_51 -to HDMI_DATA[6]
-set_location_assignment PIN_41 -to HDMI_DATA[5]
-set_location_assignment PIN_42 -to HDMI_DATA[4]
-set_location_assignment PIN_39 -to HDMI_DATA[3]
-set_location_assignment PIN_40 -to HDMI_DATA[2]
-set_location_assignment PIN_37 -to HDMI_DATA[1]
-set_location_assignment PIN_38 -to HDMI_DATA[0]
+set_instance_assignment -name IO_STANDARD LVDS -to HDMI_D2
+set_location_assignment PIN_50 -to HDMI_D2
+set_location_assignment PIN_51 -to "HDMI_D2(n)"
+set_instance_assignment -name IO_STANDARD LVDS -to HDMI_D1
+set_location_assignment PIN_41 -to HDMI_D1
+set_instance_assignment -name IO_STANDARD LVDS -to "HDMI_D1(n)"
+set_location_assignment PIN_42 -to "HDMI_D1(n)"
+set_instance_assignment -name IO_STANDARD LVDS -to "HDMI_D2(n)"
+set_instance_assignment -name IO_STANDARD LVDS -to HDMI_D0
+set_location_assignment PIN_39 -to HDMI_D0
+set_instance_assignment -name IO_STANDARD LVDS -to HDMI_CLK
+set_location_assignment PIN_37 -to HDMI_CLK
+set_instance_assignment -name IO_STANDARD LVDS -to "HDMI_CLK(n)"
+set_location_assignment PIN_38 -to "HDMI_CLK(n)"
+set_instance_assignment -name IO_STANDARD LVDS -to "HDMI_D0(n)"
+set_location_assignment PIN_40 -to "HDMI_D0(n)"
+set_instance_assignment -name IO_STANDARD "2.5 V" -to HDMI_CEC
+set_instance_assignment -name IO_STANDARD "2.5 V" -to HDMI_SDA
+set_instance_assignment -name IO_STANDARD "2.5 V" -to HDMI_SCL
+set_instance_assignment -name IO_STANDARD "2.5 V" -to TV_nSYNC
+set_instance_assignment -name IO_STANDARD "2.5 V" -to TV_HS
+set_instance_assignment -name IO_STANDARD "2.5 V" -to VGA_HS
+set_instance_assignment -name IO_STANDARD "2.5 V" -to TV_VS
+set_instance_assignment -name IO_STANDARD "2.5 V" -to VGA_VS
+set_instance_assignment -name IO_STANDARD "2.5 V" -to VGA_VGA_IN
+set_instance_assignment -name IO_STANDARD "2.5 V" -to TV_SYNC
+set_instance_assignment -name IO_STANDARD "2.5 V" -to TV_nBLANK
+set_instance_assignment -name IO_STANDARD "2.5 V" -to TV_nSYNC_IN
+set_instance_assignment -name IO_STANDARD "2.5 V" -to TV_SYNC_IN
+set_instance_assignment -name IO_STANDARD "2.5 V" -to VGA_nVGA_IN
