@@ -64,7 +64,7 @@ port (
 	HDMI_CLK	: out std_logic;
 
 	-- VGA 
-	VGA_nVGA_IN : in std_logic := '0';
+	VGA_nVGA_IN : in std_logic := '1';
 	VGA_VGA_IN	: out std_logic;
 	VGA_R 		: out std_logic_vector(7 downto 0);
 	VGA_G 		: out std_logic_vector(7 downto 0);
@@ -171,16 +171,26 @@ begin
 	end if;
 end process;
 
-process (VGA_nVGA_IN, VGA_VS_O, VGA_HS_O, VGA_BLANK, TV_VS, TV_HS) 
+process (VGA_nVGA_IN, VGA_VS_O, VGA_HS_O, VGA_BLANK, TV_VS, TV_HS, VGA_R_REG, VGA_G_REG, VGA_B_REG, TV_R_REG, TV_G_REG, TV_B_REG) 
 begin
 	if (VGA_nVGA_IN = '0') then 
 		VGA_VS <= VGA_VS_O;      -- кадровые синхроимпульсы для VGA
 		VGA_HS <= VGA_HS_O;      -- строчные синхроимпульсы для VGA
-		TV_nBLANK <= VGA_BLANK;
+		VGA_R <= VGA_R_REG;
+		VGA_G <= VGA_G_REG;
+		VGA_B <= VGA_B_REG;
+		if (VGA_BLANK = '0') then
+			TV_nBLANK <= '0';
+		else
+			TV_nBLANK <= 'Z';
+		end if;
 	else 
 		VGA_VS <= TV_VS;
 		VGA_HS <= TV_HS;
-		TV_nBLANK <= TV_VS or TV_HS;
+		TV_nBLANK <= not (TV_VS or TV_HS);
+		VGA_R <= TV_R_REG;
+		VGA_G <= TV_G_REG;
+		VGA_B <= TV_B_REG;
 	end if;
 end process;
 
@@ -189,8 +199,5 @@ TV_SYNC_IN <= not TV_nSYNC_IN;
 	
 	-- VGA 
 VGA_VGA_IN	<= not VGA_nVGA_IN;
-VGA_R <= VGA_R_REG;
-VGA_G <= VGA_G_REG;
-VGA_B <= VGA_B_REG;
 
 end rtl;
