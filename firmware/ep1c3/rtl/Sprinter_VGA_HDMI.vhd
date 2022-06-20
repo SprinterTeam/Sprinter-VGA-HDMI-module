@@ -38,6 +38,10 @@ port (
 	WR_COL		: in std_logic := '0';
 	CLK_PLL_IN 	: in std_logic := '0';
 	CLK_PLL_OUT : out std_logic := '0';
+	CLK_7125	: out std_logic := '0';
+	DAC_BCK		: in std_logic := '0';
+	DAC_DATA	: in std_logic := '0';
+	DAC_WS		: in std_logic := '0';
 
 	-- TV IN
 	TV_R 		: in std_logic_vector(7 downto 0) := "00000000";
@@ -81,6 +85,8 @@ signal CLK_VGA		: std_logic := '0';
 signal CLK_DVI		: std_logic := '0';
 signal CLK_PIXEL_VGA: std_logic := '0';
 signal locked		: std_logic;
+signal TV_VS_REG	: std_logic;
+signal TV_HS_REG	: std_logic;
 signal TV_R_REG		: std_logic_vector(7 downto 0) := "00000000";
 signal TV_G_REG		: std_logic_vector(7 downto 0) := "00000000";
 signal TV_B_REG		: std_logic_vector(7 downto 0) := "00000000";
@@ -159,6 +165,11 @@ process (CLK_VGA)
 begin 
 	if (CLK_VGA'event and CLK_VGA = '1') then 
 		CLK_PIXEL_TV <= not(CLK_PIXEL_TV);
+		TV_VS_REG <= TV_VS;
+		TV_HS_REG <= TV_HS;
+		TV_nSYNC <= not TV_SYNC;
+		TV_SYNC_IN <= not TV_nSYNC_IN; 
+		VGA_VGA_IN	<= not VGA_nVGA_IN;
 	end if;
 end process;
 
@@ -171,11 +182,12 @@ begin
 	end if;
 end process;
 
-process (VGA_nVGA_IN, VGA_VS_O, VGA_HS_O, VGA_BLANK, TV_VS, TV_HS, VGA_R_REG, VGA_G_REG, VGA_B_REG, TV_R_REG, TV_G_REG, TV_B_REG) 
+process (VGA_nVGA_IN, VGA_VS_O, VGA_HS_O, VGA_BLANK, TV_VS, TV_HS, VGA_R_REG, VGA_G_REG, VGA_B_REG, TV_R_REG, TV_G_REG, TV_B_REG,
+		CLK_PLL_IN, CLK_PIXEL_VGA, TV_VS_REG, TV_HS_REG, CLK_PIXEL_TV) 
 begin
 	if (VGA_nVGA_IN = '0') then 
-		VGA_VS <= VGA_VS_O;      -- ÐºÐ°Ð´Ñ€Ð¾Ð²Ñ‹Ðµ ÑÐ¸Ð½Ñ…Ñ€Ð¾Ð¸Ð¼Ð¿ÑƒÐ»ÑŒÑÑ‹ Ð´Ð»Ñ VGA
-		VGA_HS <= VGA_HS_O;      -- ÑÑ‚Ñ€Ð¾Ñ‡Ð½Ñ‹Ðµ ÑÐ¸Ð½Ñ…Ñ€Ð¾Ð¸Ð¼Ð¿ÑƒÐ»ÑŒÑÑ‹ Ð´Ð»Ñ VGA
+		VGA_VS <= VGA_VS_O;      -- êàäðîâûå ñèíõðîèìïóëüñû äëÿ VGA
+		VGA_HS <= VGA_HS_O;      -- ñòðî÷íûå ñèíõðîèìïóëüñû äëÿ VGA
 		VGA_R <= VGA_R_REG;
 		VGA_G <= VGA_G_REG;
 		VGA_B <= VGA_B_REG;
@@ -184,20 +196,16 @@ begin
 		else
 			TV_nBLANK <= 'Z';
 		end if;
+		CLK_7125 <= CLK_PLL_IN and VGA_BLANK;
 	else 
-		VGA_VS <= TV_VS;
-		VGA_HS <= TV_HS;
-		TV_nBLANK <= not (TV_VS or TV_HS);
+		VGA_VS <= TV_VS_REG;
+		VGA_HS <= TV_HS_REG;
+		TV_nBLANK <= not (TV_VS_REG or TV_HS_REG);
 		VGA_R <= TV_R_REG;
 		VGA_G <= TV_G_REG;
 		VGA_B <= TV_B_REG;
+		CLK_7125 <= not (TV_VS_REG or TV_HS_REG) and CLK_PIXEL_TV;
 	end if;
 end process;
-
-TV_nSYNC <= not TV_SYNC;
-TV_SYNC_IN <= not TV_nSYNC_IN;
-	
-	-- VGA 
-VGA_VGA_IN	<= not VGA_nVGA_IN;
 
 end rtl;

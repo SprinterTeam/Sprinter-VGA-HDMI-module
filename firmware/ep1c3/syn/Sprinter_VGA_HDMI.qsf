@@ -160,3 +160,7 @@ set_instance_assignment -name IO_STANDARD "2.5 V" -to TV_nBLANK
 set_instance_assignment -name IO_STANDARD "2.5 V" -to TV_nSYNC_IN
 set_instance_assignment -name IO_STANDARD "2.5 V" -to TV_SYNC_IN
 set_instance_assignment -name IO_STANDARD "2.5 V" -to VGA_nVGA_IN
+set_location_assignment PIN_73 -to CLK_7125
+set_location_assignment PIN_74 -to DAC_BCK
+set_location_assignment PIN_75 -to DAC_WS
+set_location_assignment PIN_76 -to DAC_DATA

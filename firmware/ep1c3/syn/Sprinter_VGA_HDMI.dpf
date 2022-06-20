@@ -10,13 +10,13 @@
 		</pin>
 		<pin name="HDMI_D2" direction="Output" source="Hierarchy Database" diff_pair_node="HDMI_D2(n)" >
 		</pin>
-		<pin name="HDMI_D2(n)" source="Assignments" diff_pair_node="HDMI_D2" >
+		<pin name="HDMI_D2(n)" direction="Output" source="Assignments" diff_pair_node="HDMI_D2" >
 		</pin>
-		<pin name="HDMI_D1(n)" source="Assignments" diff_pair_node="HDMI_D1" >
+		<pin name="HDMI_D1(n)" direction="Output" source="Assignments" diff_pair_node="HDMI_D1" >
 		</pin>
-		<pin name="HDMI_CLK(n)" source="Assignments" diff_pair_node="HDMI_CLK" >
+		<pin name="HDMI_CLK(n)" direction="Output" source="Assignments" diff_pair_node="HDMI_CLK" >
 		</pin>
-		<pin name="HDMI_D0(n)" source="Assignments" diff_pair_node="HDMI_D0" >
+		<pin name="HDMI_D0(n)" direction="Output" source="Assignments" diff_pair_node="HDMI_D0" >
 		</pin>
 	</pin_info>
 	<buses>
